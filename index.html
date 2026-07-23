@@ -1207,7 +1207,7 @@ sudo systemctl enable cloudflared &amp;&amp; sudo systemctl start cloudflared</c
 
   themeToggle.addEventListener('click', function() {
     var current = html.getAttribute('data-theme');
-    var next = current === 'dark' ? 'light' : 'next';
+    var next = current === 'dark' ? 'light' : 'dark';
     html.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
     themeToggle.textContent = next === 'dark' ? '🌴' : '🌙';
