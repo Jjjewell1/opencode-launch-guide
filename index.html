@@ -1,119 +1,303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Launch a Site with opencode, GitHub, Coolify & Cloudflare</title>
+<title>Launch a Site — The Island Guide</title>
 <style>
-  :root {
-    --bg: #0f0f1a;
-    --surface: #181828;
-    --surface-hover: #1e1e32;
-    --text: #cdd6f4;
-    --muted: #8b8fa8;
-    --border: #2a2a40;
-    --accent: #89b4fa;
-    --green: #a6e3a1;
-    --peach: #fab387;
-    --red: #f38ba8;
-    --mauve: #cba6f7;
-    --code-bg: #12121f;
-    --code-border: #2a2a40;
-    --step-num: #89b4fa;
+  /* ========== THEME VARIABLES ========== */
+  [data-theme="dark"] {
+    --bg: #1a1612;
+    --bg-alt: #211e18;
+    --surface: #2a2520;
+    --surface-hover: #332e27;
+    --text: #f0e6d6;
+    --muted: #a89b88;
+    --border: #3d362d;
+    --accent: #0d9488;
+    --accent-light: #2dd4bf;
+    --coral: #f97316;
+    --coral-light: #fb923c;
+    --green: #22c55e;
+    --sand: #d4a574;
+    --code-bg: #15120e;
+    --code-border: #3d362d;
+    --tooltip-bg: #332e27;
+    --progress-bg: #2a2520;
   }
 
+  [data-theme="light"] {
+    --bg: #faf6f0;
+    --bg-alt: #f5efe5;
+    --surface: #ffffff;
+    --surface-hover: #f0ebe2;
+    --text: #2a2520;
+    --muted: #7a6e60;
+    --border: #ddd3c4;
+    --accent: #0f766e;
+    --accent-light: #14b8a6;
+    --coral: #ea580c;
+    --coral-light: #f97316;
+    --green: #16a34a;
+    --sand: #b8860b;
+    --code-bg: #f0ebe2;
+    --code-border: #ddd3c4;
+    --tooltip-bg: #2a2520;
+    --progress-bg: #ddd3c4;
+  }
+
+  /* ========== RESET & BASE ========== */
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.75;
-    max-width: 820px;
+    line-height: 1.8;
+    max-width: 860px;
     margin: 0 auto;
     padding: 2rem 1.5rem 4rem;
+    transition: background 0.3s, color 0.3s;
   }
 
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
 
-  .hero {
-    text-align: center;
-    padding: 3rem 1.5rem;
-    background: linear-gradient(135deg, rgba(137,180,250,0.08), rgba(203,166,247,0.05));
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 3rem;
+  /* ========== SCROLL PROGRESS BAR ========== */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--coral));
+    z-index: 1000;
+    transition: width 0.15s ease-out;
   }
 
+  /* ========== THEME TOGGLE ========== */
+  .theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 999;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .theme-toggle:hover { background: var(--surface-hover); transform: scale(1.1); }
+
+  /* ========== HERO ========== */
+  .hero {
+    text-align: center;
+    padding: 3rem 1.5rem 2.5rem;
+    background: linear-gradient(135deg, rgba(13,148,136,0.1), rgba(249,115,22,0.08), rgba(212,165,116,0.06));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--coral), var(--sand), var(--accent));
+  }
+
+  .hero-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
   .hero h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--accent), var(--mauve));
+    font-size: 2.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-light), var(--coral));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
   }
 
-  .hero p { color: var(--muted); font-size: 1.1rem; }
+  .hero .subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 1.5rem; }
 
   .flow {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     flex-wrap: wrap;
-    margin: 2rem 0 1rem;
-    font-size: 0.95rem;
   }
 
   .flow .tool {
     background: var(--surface);
     border: 1px solid var(--border);
-    padding: 0.35rem 0.75rem;
-    border-radius: 6px;
-    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
     color: var(--accent);
+    transition: transform 0.2s;
+  }
+  .flow .tool:hover { transform: translateY(-2px); }
+  .flow .arrow { color: var(--coral); font-size: 1.3rem; }
+
+  /* ========== ARCHITECTURE DIAGRAM ========== */
+  .arch-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
   }
 
-  .flow .arrow { color: var(--muted); font-size: 1.2rem; }
+  .arch-diagram h3 {
+    color: var(--coral);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
 
-  h2 {
-    font-size: 1.35rem;
-    color: var(--green);
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+  }
+
+  .arch-node {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.6rem 0.9rem;
+    text-align: center;
+    min-width: 100px;
+    transition: transform 0.2s;
+  }
+  .arch-node:hover { transform: translateY(-2px); }
+  .arch-node .icon { font-size: 1.5rem; display: block; margin-bottom: 0.2rem; }
+  .arch-node .name { font-weight: 700; color: var(--accent); font-size: 0.8rem; }
+  .arch-node .desc { color: var(--muted); font-size: 0.7rem; margin-top: 0.15rem; }
+
+  .arch-arrow { color: var(--coral); font-size: 1.4rem; flex-shrink: 0; }
+
+  .arch-label {
+    margin-top: 1rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ========== PREREQUISITES ========== */
+  .prereqs {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .prereqs h2 {
+    font-size: 1.2rem;
+    color: var(--coral);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .prereq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+
+  .prereq-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+
+  .prereq-item .check { color: var(--green); font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .prereq-item .info .label { font-weight: 600; }
+  .prereq-item .info .detail { color: var(--muted); font-size: 0.8rem; }
+
+  .cost-note {
+    margin-top: 1rem;
+    padding: 0.7rem 1rem;
+    background: rgba(249,115,22,0.08);
+    border: 1px solid rgba(249,115,22,0.2);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--coral-light);
+  }
+
+  @media (max-width: 600px) {
+    .prereq-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ========== SECTION HEADINGS ========== */
+  h2.section-title {
+    font-size: 1.4rem;
+    color: var(--accent);
     margin: 2.5rem 0 0.8rem;
     display: flex;
     align-items: center;
     gap: 0.6rem;
   }
 
-  h2 .num {
+  h2.section-title .num {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: rgba(137,180,250,0.15);
-    border: 1px solid rgba(137,180,250,0.3);
-    border-radius: 8px;
+    width: 34px;
+    height: 34px;
+    background: rgba(13,148,136,0.15);
+    border: 1px solid rgba(13,148,136,0.3);
+    border-radius: 50%;
     font-size: 0.85rem;
     font-weight: 700;
-    color: var(--accent);
+    color: var(--accent-light);
     flex-shrink: 0;
   }
 
   h3 {
     font-size: 1.05rem;
-    color: var(--peach);
+    color: var(--coral);
     margin: 1.5rem 0 0.5rem;
   }
 
-  p { margin-bottom: 0.8rem; }
+  h4 {
+    font-size: 0.95rem;
+    color: var(--sand);
+    margin: 1.2rem 0 0.4rem;
+  }
 
+  p { margin-bottom: 0.8rem; }
   ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
   li { margin-bottom: 0.4rem; }
 
+  /* ========== CODE BLOCKS ========== */
   code {
     font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
     font-size: 0.88em;
@@ -121,7 +305,12 @@
     border: 1px solid var(--code-border);
     padding: 0.15rem 0.4rem;
     border-radius: 4px;
-    color: var(--red);
+    color: var(--coral);
+  }
+
+  .code-block {
+    position: relative;
+    margin: 0.8rem 0 1.2rem;
   }
 
   pre {
@@ -129,9 +318,8 @@
     border: 1px solid var(--code-border);
     border-radius: 8px;
     padding: 1rem 1.2rem;
+    padding-right: 3rem;
     overflow-x: auto;
-    margin: 0.8rem 0 1.2rem;
-    position: relative;
   }
 
   pre code {
@@ -143,41 +331,250 @@
     line-height: 1.6;
   }
 
-  .label {
+  .code-label {
     position: absolute;
     top: -10px;
-    right: 12px;
+    right: 42px;
     background: var(--surface);
     border: 1px solid var(--border);
     color: var(--muted);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     padding: 2px 10px;
     border-radius: 10px;
     font-family: 'Segoe UI', system-ui, sans-serif;
     font-weight: 600;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
   }
 
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 2;
+  }
+  .copy-btn:hover { background: var(--surface-hover); color: var(--accent); border-color: var(--accent); }
+  .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+  /* ========== METHOD TOGGLE (Terminal vs GUI) ========== */
+  .method-tabs {
+    display: flex;
+    gap: 0;
+    margin: 1rem 0 0;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .method-tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .method-tab:hover { color: var(--text); }
+  .method-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .method-content {
+    display: none;
+    padding: 1rem 0 0;
+  }
+  .method-content.active { display: block; }
+
+  .method-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .method-badge.cli { background: rgba(13,148,136,0.15); color: var(--accent-light); border: 1px solid rgba(13,148,136,0.3); }
+  .method-badge.gui { background: rgba(249,115,22,0.15); color: var(--coral-light); border: 1px solid rgba(249,115,22,0.3); }
+
+  /* ========== CALLOUT BOXES ========== */
   .callout {
     border-left: 3px solid var(--border);
     padding: 0.9rem 1.1rem;
     margin: 1.2rem 0;
-    border-radius: 0 6px 6px 0;
+    border-radius: 0 8px 8px 0;
+    background: var(--surface);
+    font-size: 0.92rem;
+  }
+  .callout h4 { margin-top: 0; }
+  .callout.tip { border-left-color: var(--accent); background: rgba(13,148,136,0.06); }
+  .callout.warn { border-left-color: var(--coral); background: rgba(249,115,22,0.06); }
+  .callout.success { border-left-color: var(--green); background: rgba(34,197,94,0.06); }
+  .callout.what { border-left-color: var(--sand); background: rgba(212,165,116,0.06); }
+  .callout.what h4 { color: var(--sand); }
+
+  /* ========== GLOSSARY TOOLTIPS ========== */
+  .glossary {
+    position: relative;
+    border-bottom: 1px dashed var(--accent);
+    cursor: help;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .glossary .tip-text {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--tooltip-bg);
+    color: var(--text);
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    font-weight: 400;
+    width: 240px;
+    text-align: center;
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 0.2s, visibility 0.2s;
+    line-height: 1.5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .glossary:hover .tip-text { visibility: visible; opacity: 1; }
+
+  /* ========== COLLAPSIBLE SECTIONS ========== */
+  .phase {
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
     background: var(--surface);
   }
 
-  .callout.tip { border-left-color: var(--accent); }
-  .callout.warn { border-left-color: var(--peach); background: rgba(250,179,135,0.05); }
-  .callout.success { border-left-color: var(--green); background: rgba(166,227,161,0.05); }
-
-  .callout strong { color: var(--green); }
-
-  hr {
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    background: var(--surface);
     border: none;
-    border-top: 1px solid var(--border);
-    margin: 2.5rem 0;
+    width: 100%;
+    text-align: left;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+  .phase-header:hover { background: var(--surface-hover); }
+
+  .phase-header .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: rgba(13,148,136,0.15);
+    border: 1px solid rgba(13,148,136,0.3);
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-light);
+    flex-shrink: 0;
   }
 
+  .phase-header .title { font-weight: 700; flex: 1; }
+  .phase-header .emoji { font-size: 1.2rem; }
+  .phase-header .chevron {
+    color: var(--muted);
+    transition: transform 0.3s;
+    font-size: 0.9rem;
+  }
+  .phase.open .phase-header .chevron { transform: rotate(180deg); }
+
+  .phase-body {
+    display: none;
+    padding: 0 1.2rem 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+  .phase.open .phase-body { display: block; }
+
+  /* ========== CHEAT SHEET ========== */
+  .cheatsheet {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+
+  .cheatsheet-header {
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    background: var(--surface);
+    border: none;
+    width: 100%;
+    text-align: left;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s;
+  }
+  .cheatsheet-header:hover { background: var(--surface-hover); }
+
+  .cheatsheet-body {
+    display: none;
+    padding: 0 1.2rem 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+  .cheatsheet.open .cheatsheet-body { display: block; }
+
+  /* ========== TROUBLESHOOT ========== */
+  .troubleshoot-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin: 0.6rem 0;
+  }
+  .troubleshoot-item .problem {
+    font-weight: 600;
+    color: var(--coral);
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+  .troubleshoot-item .fix {
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+  .troubleshoot-item .fix code { font-size: 0.85em; }
+
+  /* ========== FOOTER ========== */
   .footer {
     text-align: center;
     color: var(--muted);
@@ -186,20 +583,39 @@
     padding-top: 1.5rem;
     border-top: 1px solid var(--border);
   }
+  .footer .island { font-size: 1.5rem; margin-bottom: 0.3rem; }
 
+  /* ========== DIVIDER ========== */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  /* ========== RESPONSIVE ========== */
   @media (max-width: 600px) {
     body { padding: 1rem; }
-    .hero h1 { font-size: 1.6rem; }
-    .flow { font-size: 0.8rem; }
-    pre { padding: 0.75rem; }
+    .hero h1 { font-size: 1.7rem; }
+    .arch-flow { flex-direction: column; }
+    .arch-arrow { transform: rotate(90deg); }
+    .theme-toggle { top: 0.5rem; right: 0.5rem; width: 36px; height: 36px; }
+    .prereq-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
+<!-- Progress Bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌴</button>
+
+<!-- ========== HERO ========== -->
 <div class="hero">
+  <div class="hero-emoji">🏝️ 🌊 🏖️</div>
   <h1>Launch a New Site</h1>
-  <p>A step-by-step guide using opencode, GitHub, Coolify, and Cloudflare</p>
+  <p class="subtitle">A laid-back guide to going live with <strong>opencode</strong>, <strong>GitHub</strong>, <strong>Coolify</strong> &amp; <strong>Cloudflare</strong></p>
   <div class="flow">
     <span class="tool">opencode</span>
     <span class="arrow">&rarr;</span>
@@ -208,202 +624,679 @@
     <span class="tool">Coolify</span>
     <span class="arrow">&rarr;</span>
     <span class="tool">Cloudflare</span>
+    <span class="arrow">&rarr;</span>
+    <span class="tool">🌴 Live!</span>
   </div>
 </div>
 
-<!-- ============================== -->
-<!-- PHASE 1 -->
-<!-- ============================== -->
-<h2><span class="num">1</span> Build with opencode</h2>
+<!-- ========== ARCHITECTURE DIAGRAM ========== -->
+<div class="arch-diagram">
+  <h3>🗺️ How It All Fits Together</h3>
+  <div class="arch-flow">
+    <div class="arch-node">
+      <span class="icon">💻</span>
+      <span class="name">Your Computer</span>
+      <span class="desc">opencode builds the code</span>
+    </div>
+    <span class="arch-arrow">&rarr;</span>
+    <div class="arch-node">
+      <span class="icon">📦</span>
+      <span class="name">GitHub</span>
+      <span class="desc">Stores your code</span>
+    </div>
+    <span class="arch-arrow">&rarr;</span>
+    <div class="arch-node">
+      <span class="icon">🚀</span>
+      <span class="name">Coolify</span>
+      <span class="desc">Builds &amp; runs it</span>
+    </div>
+    <span class="arch-arrow">&rarr;</span>
+    <div class="arch-node">
+      <span class="icon">🛡️</span>
+      <span class="name">Cloudflare</span>
+      <span class="desc">Tunnels traffic to it</span>
+    </div>
+    <span class="arch-arrow">&rarr;</span>
+    <div class="arch-node">
+      <span class="icon">🌍</span>
+      <span class="name">The Web</span>
+      <span class="desc">Visitors see your site</span>
+    </div>
+  </div>
+  <p class="arch-label">You write it. GitHub holds it. Coolify runs it. Cloudflare delivers it.</p>
+</div>
 
-<p>opencode is an AI-powered CLI that writes code, runs commands, and manages your project from the terminal. You describe what you want, and it generates the files.</p>
+<!-- ========== PREREQUISITES ========== -->
+<div class="prereqs">
+  <h2>✅ What You Need Before Starting</h2>
+  <div class="prereq-grid">
+    <div class="prereq-item">
+      <span class="check">✓</span>
+      <div class="info">
+        <div class="label">opencode installed</div>
+        <div class="detail">Free — runs on your machine</div>
+      </div>
+    </div>
+    <div class="prereq-item">
+      <span class="check">✓</span>
+      <div class="info">
+        <div class="label">GitHub account</div>
+        <div class="detail">Free — sign up at github.com</div>
+      </div>
+    </div>
+    <div class="prereq-item">
+      <span class="check">✓</span>
+      <div class="info">
+        <div class="label">Cloudflare account</div>
+        <div class="detail">Free — sign up at cloudflare.com</div>
+      </div>
+    </div>
+    <div class="prereq-item">
+      <span class="check">✓</span>
+      <div class="info">
+        <div class="label">Coolify server</div>
+        <div class="detail">Self-hosted or VPS — see note below</div>
+      </div>
+    </div>
+    <div class="prereq-item">
+      <span class="check">✓</span>
+      <div class="info">
+        <div class="label">A domain name</div>
+        <div class="detail">~$10/year from any registrar</div>
+      </div>
+    </div>
+    <div class="prereq-item">
+      <span class="check">✓</span>
+      <div class="info">
+        <div class="label">Git installed</div>
+        <div class="detail">Free — git-scm.com</div>
+      </div>
+    </div>
+  </div>
+  <div class="cost-note">
+    💰 <strong>Cost breakdown:</strong> Everything is free except the domain (~$10/yr) and a server to run Coolify on (a $5/mo VPS works great, or use hardware you already have).
+  </div>
+</div>
 
-<h3>Install opencode</h3>
-<pre><code class="bash"># macOS / Linux
+<!-- ========== PHASE 1: OPENCODE ========== -->
+<div class="phase open" id="phase1">
+  <button class="phase-header" onclick="togglePhase('phase1')">
+    <span class="num">1</span>
+    <span class="emoji">🤖</span>
+    <span class="title">Build with opencode</span>
+    <span class="chevron">▼</span>
+  </button>
+  <div class="phase-body">
+    <p><span class="glossary">opencode<span class="tip-text">An AI-powered coding assistant that runs in your terminal. You describe what you want, and it writes the code for you.</span></span> is your AI coding partner. You tell it what you want in plain English, and it writes the HTML, CSS, and JavaScript for you.</p>
+
+    <div class="method-tabs">
+      <button class="method-tab active" onclick="switchMethod('opencode', 'cli', this)">⌨️ Terminal</button>
+      <button class="method-tab" onclick="switchMethod('opencode', 'gui', this)">🖥️ Desktop App</button>
+    </div>
+
+    <div class="method-content active" id="opencode-cli">
+      <span class="method-badge cli">Terminal</span>
+      <h4>Install opencode</h4>
+      <div class="code-block">
+        <span class="code-label">INSTALL</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code># macOS / Linux
 curl -fsSL https://opencode.ai/install.sh | sh
 
 # Windows (PowerShell)
-iwr -useb https://opencode.ai/install.ps1 | iex</code><span class="label">INSTALL</span></pre>
+iwr -useb https://opencode.ai/install.ps1 | iex</code></pre>
+      </div>
 
-<h3>Create your project</h3>
-<pre><code class="bash"># Make a new folder and enter it
-mkdir my-new-site && cd my-new-site
+      <h4>Create your project &amp; launch</h4>
+      <div class="code-block">
+        <span class="code-label">TERMINAL</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code>mkdir my-new-site &amp;&amp; cd my-new-site
+opencode</code></pre>
+      </div>
 
-# Launch opencode
-opencode</code><span class="label">TERMINAL</span></pre>
-
-<p>Once inside the opencode prompt, describe your site:</p>
-
-<pre><code class="text">Build me a single-page portfolio site with a hero section,
+      <h4>Describe your site</h4>
+      <p>Once opencode starts, just tell it what you want:</p>
+      <div class="code-block">
+        <span class="code-label">YOUR PROMPT</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code>Build me a single-page portfolio site with a hero section,
 an about section, a projects grid, and a contact form.
-Use a dark theme with blue accents. Keep it to one HTML file.</code><span class="label">PROMPT</span></pre>
+Use a dark theme with teal accents. Keep it to one HTML file.</code></pre>
+      </div>
+    </div>
 
-<p>opencode will create the files, install dependencies if needed, and can even run a local dev server so you can preview the result.</p>
+    <div class="method-content" id="opencode-gui">
+      <span class="method-badge gui">Desktop App</span>
+      <h4>Using the opencode Desktop App</h4>
+      <ol>
+        <li>Download opencode from <a href="https://opencode.ai" target="_blank">opencode.ai</a></li>
+        <li>Install and open the application</li>
+        <li>Create a new project folder and open it in the app</li>
+        <li>Use the chat panel to describe your site — same prompts work here!</li>
+        <li>The app shows your files updating in real time as opencode writes them</li>
+      </ol>
+      <div class="callout tip">
+        <h4>💡 Pro Tip</h4>
+        <p>The desktop app gives you a visual file tree and live preview. Great if you're not comfortable with the terminal yet!</p>
+      </div>
+    </div>
 
-<div class="callout tip">
-  <strong>Tip:</strong> You can iterate conversationally. Say things like "make the header sticky" or "add a footer with social links" and opencode will update the code in place.
+    <div class="callout what">
+      <h4>🏝️ What Just Happened?</h4>
+      <p>opencode analyzed your description and generated all the files your site needs — HTML structure, CSS styling, and any JavaScript interactivity. Think of it as having a web developer who works instantly and never gets tired.</p>
+    </div>
+
+    <div class="callout tip">
+      <h4>💡 Pro Tip</h4>
+      <p>You can iterate conversationally. Say things like <em>"make the header sticky"</em> or <em>"add a footer with social links"</em> and opencode will update the code in place.</p>
+    </div>
+
+    <h3>🔧 Troubleshooting</h3>
+    <div class="troubleshoot-item">
+      <div class="problem">❌ "opencode: command not found"</div>
+      <div class="fix">Your terminal doesn't know where opencode is. Close and reopen your terminal, or restart your computer. If it still doesn't work, re-run the install command.</div>
+    </div>
+    <div class="troubleshoot-item">
+      <div class="problem">❌ opencode creates too many files or the wrong structure</div>
+      <div class="fix">Be more specific in your prompt. Say <code>"keep everything in a single index.html file"</code> to prevent it from splitting things up.</div>
+    </div>
+  </div>
 </div>
 
-<hr>
+<!-- ========== PHASE 2: GITHUB ========== -->
+<div class="phase" id="phase2">
+  <button class="phase-header" onclick="togglePhase('phase2')">
+    <span class="num">2</span>
+    <span class="emoji">📦</span>
+    <span class="title">Push to GitHub</span>
+    <span class="chevron">▼</span>
+  </button>
+  <div class="phase-body">
+    <p>Now that your site exists on your computer, you need to put it on <span class="glossary">GitHub<span class="tip-text">A website that stores your code online. Think of it as Google Drive, but specifically for code. Coolify pulls from here.</span></span> so Coolify can access it.</p>
 
-<!-- ============================== -->
-<!-- PHASE 2 -->
-<!-- ============================== -->
-<h2><span class="num">2</span> Push to GitHub</h2>
+    <div class="method-tabs">
+      <button class="method-tab active" onclick="switchMethod('github', 'cli', this)">⌨️ Terminal</button>
+      <button class="method-tab" onclick="switchMethod('github', 'gui', this)">🌐 GitHub.com</button>
+      <button class="method-tab" onclick="switchMethod('github', 'opencode', this)">🤖 Via opencode</button>
+    </div>
 
-<p>Once the site looks right, get it into a GitHub repo so Coolify can pull from it.</p>
-
-<h3>Initialize the repo</h3>
-<pre><code class="bash">git init
+    <div class="method-content active" id="github-cli">
+      <span class="method-badge cli">Terminal</span>
+      <h4>Step 1: Initialize the repo</h4>
+      <div class="code-block">
+        <span class="code-label">TERMINAL</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code>git init
 git add .
-git commit -m "Initial site build"</code><span class="label">TERMINAL</span></pre>
+git commit -m "Initial site build"</code></pre>
+      </div>
 
-<h3>Create the GitHub repo and push</h3>
-<p>You can do this from the terminal with the GitHub CLI (<code>gh</code>), or create the repo on github.com and push manually.</p>
+      <h4>Step 2: Create the GitHub repo &amp; push</h4>
+      <p><strong>Option A — GitHub CLI (fastest):</strong></p>
+      <div class="code-block">
+        <span class="code-label">TERMINAL</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code># Install GitHub CLI first: gh.github.com
+gh repo create my-new-site --public --source=. --push</code></pre>
+      </div>
 
-<pre><code class="bash"># Option A: Using GitHub CLI (fastest)
-gh repo create my-new-site --public --source=. --push
-
-# Option B: Manual
-# 1. Go to github.com/new and create the repo
-# 2. Then run:
+      <p><strong>Option B — Manual setup:</strong></p>
+      <div class="code-block">
+        <span class="code-label">TERMINAL</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code># After creating the repo on github.com:
 git remote add origin https://github.com/YOUR_USERNAME/my-new-site.git
 git branch -M main
-git push -u origin main</code><span class="label">TERMINAL</span></pre>
+git push -u origin main</code></pre>
+      </div>
+    </div>
 
-<div class="callout tip">
-  <strong>Tip:</strong> You can let opencode do this for you. Just say "push this to GitHub" and it will run the commands above.
+    <div class="method-content" id="github-gui">
+      <span class="method-badge gui">GitHub.com Web Interface</span>
+      <h4>Step 1: Create the repo on GitHub</h4>
+      <ol>
+        <li>Go to <a href="https://github.com/new" target="_blank">github.com/new</a></li>
+        <li>Enter a name for your repo (e.g., <code>my-new-site</code>)</li>
+        <li>Choose <strong>Public</strong> or <strong>Private</strong></li>
+        <li><strong>Do NOT</strong> check "Add a README file" — keep it empty</li>
+        <li>Click <strong>Create repository</strong></li>
+      </ol>
+
+      <h4>Step 2: Upload your files</h4>
+      <ol>
+        <li>On your new repo page, click <strong>"uploading an existing file"</strong></li>
+        <li>Drag and drop your <code>index.html</code> (and any other files) into the upload area</li>
+        <li>Click <strong>Commit changes</strong></li>
+      </ol>
+
+      <div class="callout tip">
+        <h4>💡 Pro Tip</h4>
+        <p>The drag-and-drop method works great for simple static sites. For ongoing development, the terminal method (Option A) is faster since you don't have to open the browser each time.</p>
+      </div>
+    </div>
+
+    <div class="method-content" id="github-opencode">
+      <span class="method-badge gui">Via opencode</span>
+      <h4>Let opencode handle it</h4>
+      <p>Simply tell opencode:</p>
+      <div class="code-block">
+        <span class="code-label">YOUR PROMPT</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code>Push this project to GitHub. Create a new public repo called my-new-site.</code></pre>
+      </div>
+      <p>opencode will run the git commands for you. It will ask you to confirm before pushing.</p>
+
+      <div class="callout tip">
+        <h4>💡 Pro Tip</h4>
+        <p>You'll need the <span class="glossary">GitHub CLI<span class="tip-text">A command-line tool from GitHub. Install it at gh.github.com. Lets you create repos, manage PRs, and more — all from the terminal.</span></span> installed for this to work. Run <code>gh auth login</code> first to connect your account.</p>
+      </div>
+    </div>
+
+    <div class="callout what">
+      <h4>🏝️ What Just Happened?</h4>
+      <p>Your code now lives in two places: on your computer <em>and</em> on GitHub's servers. GitHub is your code's home base — Coolify will read from here, and if your computer explodes, your code is safe.</p>
+    </div>
+
+    <h3>🔧 Troubleshooting</h3>
+    <div class="troubleshoot-item">
+      <div class="problem">❌ "Permission denied (publickey)"</div>
+      <div class="fix">SSH isn't set up. Either <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh" target="_blank">configure SSH keys</a>, or use the HTTPS URL instead: <code>git remote add origin https://github.com/USER/REPO.git</code></div>
+    </div>
+    <div class="troubleshoot-item">
+      <div class="problem">❌ "remote: Repository not found"</div>
+      <div class="fix">Double-check the repo URL. Make sure you've already created the repo on GitHub before pushing.</div>
+    </div>
+  </div>
 </div>
 
-<hr>
+<!-- ========== PHASE 3: COOLIFY ========== -->
+<div class="phase" id="phase3">
+  <button class="phase-header" onclick="togglePhase('phase3')">
+    <span class="num">3</span>
+    <span class="emoji">🚀</span>
+    <span class="title">Deploy with Coolify</span>
+    <span class="chevron">▼</span>
+  </button>
+  <div class="phase-body">
+    <p><span class="glossary">Coolify<span class="tip-text">A self-hosted platform (like Heroku, but free and on your own server). It pulls your code from GitHub, builds it, and keeps it running 24/7.</span></span> is where your site comes alive. It's like a personal Heroku that runs on your own hardware — it pulls code from GitHub, builds it, and keeps it running around the clock.</p>
 
-<!-- ============================== -->
-<!-- PHASE 3 -->
-<!-- ============================== -->
-<h2><span class="num">3</span> Deploy with Coolify</h2>
+    <div class="method-tabs">
+      <button class="method-tab active" onclick="switchMethod('coolify', 'gui', this)">🖥️ Dashboard (Recommended)</button>
+      <button class="method-tab" onclick="switchMethod('coolify', 'cli', this)">⌨️ Terminal</button>
+    </div>
 
-<p>Coolify is a self-hosted PaaS (like Heroku, but on your own server). It pulls your code from GitHub, builds it, and keeps it running.</p>
+    <div class="method-content active" id="coolify-gui">
+      <span class="method-badge gui">Coolify Dashboard</span>
+      <h4>Step 1: Create a new application</h4>
+      <ol>
+        <li>Open your Coolify dashboard (usually at <code>http://YOUR_SERVER_IP:8000</code>)</li>
+        <li>Navigate to your <strong>Project</strong> (create one if you don't have one)</li>
+        <li>Click <strong>+ New Resource</strong> and select <strong>Application</strong></li>
+        <li>Choose <strong>GitHub</strong> as the source</li>
+        <li>If prompted, authorize Coolify to access your GitHub account</li>
+        <li>Select the repository and branch (<code>main</code>) you just pushed</li>
+      </ol>
 
-<h3>Connect your GitHub repo</h3>
-<ol>
-  <li>Open your Coolify dashboard.</li>
-  <li>Navigate to your project (or create a new one).</li>
-  <li>Click <strong>+ Add Resource</strong> and select <strong>Application</strong>.</li>
-  <li>Choose <strong>GitHub</strong> as the source and authorize Coolify if prompted.</li>
-  <li>Select the repository and branch (<code>main</code>) you just pushed.</li>
-</ol>
+      <h4>Step 2: Configure the build</h4>
+      <ol>
+        <li>Set the <strong>Build Pack</strong> to <code>Static</code> (for plain HTML/CSS/JS sites)</li>
+        <li>Set <strong>Publish Directory</strong> to <code>/</code> (if your <code>index.html</code> is in the root)</li>
+        <li>The internal port is usually <code>80</code> for static sites — leave the default</li>
+      </ol>
 
-<h3>Configure the build</h3>
-<ol>
-  <li>Set the <strong>Build Pack</strong> to <code>Static</code> (or <code>Nixpacks</code> if you have a framework).</li>
-  <li>Set the <strong>Publish Directory</strong> to <code>/</code> for a root-level static site, or <code>/dist</code> if using a build step.</li>
-  <li>Coolify will assign an internal port (usually <code>80</code> for static sites).</li>
-</ol>
+      <h4>Step 3: Deploy</h4>
+      <p>Click <strong>Deploy</strong>. Watch the build logs in real time as Coolify pulls your code, builds the container, and starts serving it.</p>
+    </div>
 
-<h3>Deploy</h3>
-<p>Click <strong>Deploy</strong>. Coolify pulls your code from GitHub, builds the container, and starts serving it. You'll see build logs in real time.</p>
+    <div class="method-content" id="coolify-cli">
+      <span class="method-badge cli">Terminal (Advanced)</span>
+      <p>Coolify is primarily managed through its web dashboard. However, if you need to automate deployments or manage things programmatically, Coolify exposes an <span class="glossary">API<span class="tip-text">Application Programming Interface — a way for software to talk to other software. Coolify's API lets you trigger deploys and manage apps from scripts.</span></span>:</p>
+      <div class="code-block">
+        <span class="code-label">TERMINAL</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code># Trigger a redeploy via Coolify's API
+curl -X POST "http://YOUR_COOLIFY_URL/api/v1/applications/YOUR_APP_ID/deploy" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"</code></pre>
+      </div>
+      <div class="callout tip">
+        <h4>💡 Pro Tip</h4>
+        <p>Find your API key in Coolify dashboard → <strong>Settings</strong> → <strong>API Tokens</strong>. The app ID is in the URL when you have an application selected.</p>
+      </div>
+    </div>
 
-<div class="callout success">
-  <strong>Done:</strong> Your site is now running on your Coolify server. You can access it via the internal IP or the preview URL Coolify provides.
+    <div class="callout what">
+      <h4>🏝️ What Just Happened?</h4>
+      <p>Coolify pulled your code from GitHub, put it inside a lightweight container (like a mini virtual machine), and started serving it on your server. Your site is now running 24/7 — you can access it via your server's internal IP address.</p>
+    </div>
+
+    <h3>Step 4: Set up auto-deploy (webhook)</h3>
+    <p>This is the magic step. After this, every time you push code to GitHub, Coolify automatically redeploys — no clicking required.</p>
+    <ol>
+      <li>In Coolify, go to your app → <strong>Webhooks</strong> tab → copy the webhook URL</li>
+      <li>In GitHub, go to your repo → <strong>Settings</strong> → <strong>Webhooks</strong> → <strong>Add webhook</strong></li>
+      <li>Paste the Coolify URL and click <strong>Add webhook</strong></li>
+    </ol>
+
+    <div class="callout success">
+      <h4>🎉 You're Done with Coolify!</h4>
+      <p>From now on, every <code>git push</code> (or telling opencode to "push to GitHub") triggers a zero-downtime redeploy. Your site updates itself.</p>
+    </div>
+
+    <h3>🔧 Troubleshooting</h3>
+    <div class="troubleshoot-item">
+      <div class="problem">❌ "Coolify can't connect to my GitHub repo"</div>
+      <div class="fix">Go to Coolify → <strong>Settings</strong> → <strong>GitHub</strong> and re-authorize. Make sure the repo isn't private unless Coolify has permission to access it.</div>
+    </div>
+    <div class="troubleshoot-item">
+      <div class="problem">❌ Build fails with "no such file: index.html"</div>
+      <div class="fix">Check your <strong>Publish Directory</strong>. If <code>index.html</code> is in the root, set it to <code>/</code>. If it's in a subfolder like <code>dist/</code>, set it to <code>/dist</code>.</div>
+    </div>
+    <div class="troubleshoot-item">
+      <div class="problem">❌ Site shows "502 Bad Gateway"</div>
+      <div class="fix">The container crashed. Check the <strong>Logs</strong> tab in Coolify for errors. Usually it's a port mismatch — make sure the port in Coolify matches what the container is actually listening on.</div>
+    </div>
+  </div>
 </div>
 
-<h3>Set up auto-deploy (webhook)</h3>
-<p>Every time you push to GitHub, Coolify can automatically redeploy:</p>
-<ol>
-  <li>In Coolify, go to your app's <strong>Webhooks</strong> tab and copy the webhook URL.</li>
-  <li>In GitHub, go to your repo &rarr; <strong>Settings</strong> &rarr; <strong>Webhooks</strong> &rarr; <strong>Add webhook</strong>.</li>
-  <li>Paste the Coolify URL and save.</li>
-</ol>
+<!-- ========== PHASE 4: CLOUDFLARE ========== -->
+<div class="phase" id="phase4">
+  <button class="phase-header" onclick="togglePhase('phase4')">
+    <span class="num">4</span>
+    <span class="emoji">🛡️</span>
+    <span class="title">Expose with Cloudflare</span>
+    <span class="chevron">▼</span>
+  </button>
+  <div class="phase-body">
+    <p>Your site is running on your server, but only accessible via its IP address. <span class="glossary">Cloudflare Tunnels<span class="tip-text">A secure connection between your server and Cloudflare's network. It lets visitors reach your site through Cloudflare's CDN without opening ports on your firewall.</span></span> connect your site to the outside world — giving you a real domain name, free HTTPS (the padlock icon), and <span class="glossary">DDoS<span class="tip-text">Distributed Denial of Service — when bots flood your site with traffic to knock it offline. Cloudflare absorbs these attacks before they reach you.</span></span> protection.</p>
 
-<div class="callout tip">
-  <strong>Full automation:</strong> From now on, every <code>git push</code> (or asking opencode to "push and deploy") triggers a zero-downtime redeploy.
-</div>
+    <div class="method-tabs">
+      <button class="method-tab active" onclick="switchMethod('cloudflare', 'gui', this)">🌐 Cloudflare Dashboard (Recommended)</button>
+      <button class="method-tab" onclick="switchMethod('cloudflare', 'cli', this)">⌨️ Terminal</button>
+    </div>
 
-<hr>
+    <div class="method-content active" id="cloudflare-gui">
+      <span class="method-badge gui">Cloudflare Zero Trust Dashboard</span>
 
-<!-- ============================== -->
-<!-- PHASE 4 -->
-<!-- ============================== -->
-<h2><span class="num">4</span> Expose with Cloudflare</h2>
-
-<p>Cloudflare Tunnels let you serve your self-hosted site on a real domain with SSL, without opening ports on your firewall.</p>
-
-<h3>Prerequisites</h3>
-<ul>
-  <li>A domain added to Cloudflare (nameservers pointed to Cloudflare).</li>
-  <li><code>cloudflared</code> installed on your Coolify server.</li>
-</ul>
-
-<pre><code class="bash"># Install cloudflared on your server
-# Debian / Ubuntu
+      <h4>Step 1: Install cloudflared on your server</h4>
+      <p>You still need one terminal command to install the connector on your server:</p>
+      <div class="code-block">
+        <span class="code-label">SSH INTO YOUR SERVER</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code># Debian / Ubuntu
 curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
 echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
-sudo apt update && sudo apt install -y cloudflared</code><span class="label">SERVER</span></pre>
+sudo apt update &amp;&amp; sudo apt install -y cloudflared</code></pre>
+      </div>
 
-<h3>Create the tunnel</h3>
-<pre><code class="bash"># Authenticate with Cloudflare (opens a browser login)
+      <h4>Step 2: Create the tunnel in the dashboard</h4>
+      <ol>
+        <li>Go to <a href="https://one.dash.cloudflare.com" target="_blank">Cloudflare Zero Trust</a> → <strong>Networks</strong> → <strong>Tunnels</strong></li>
+        <li>Click <strong>Create a tunnel</strong></li>
+        <li>Select <strong>Cloudflared</strong> → click <strong>Next</strong></li>
+        <li>Name your tunnel (e.g., <code>my-site-tunnel</code>) → click <strong>Next</strong></li>
+        <li>Cloudflare will show you an install command with a token — copy it and run it on your server</li>
+      </ol>
+
+      <h4>Step 3: Add a hostname</h4>
+      <ol>
+        <li>Back in the dashboard, go to the <strong>Public Hostname</strong> tab</li>
+        <li>Click <strong>Add a public hostname</strong></li>
+        <li>Subdomain: <code>www</code> (or whatever you want)</li>
+        <li>Domain: select your domain from the dropdown</li>
+        <li>Service Type: <code>HTTP</code></li>
+        <li>URL: <code>localhost:80</code> (or whatever port Coolify is serving on)</li>
+        <li>Click <strong>Save hostname</strong></li>
+      </ol>
+
+      <h4>Step 4: Start the tunnel</h4>
+      <p>Run the install command Cloudflare gave you. This starts the tunnel and connects your site to the internet:</p>
+      <div class="code-block">
+        <span class="code-label">SERVER</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code># The command from the dashboard will look like this:
+sudo cloudflared service install eyJhIjoiNjQ...your-token...ZHAifQ
+
+# It automatically starts as a service — it'll survive reboots!</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <h4>💡 Pro Tip</h4>
+        <p>The dashboard method is great because it handles the tunnel config file for you. You don't need to manually edit <code>config.yml</code> — the dashboard does it all.</p>
+      </div>
+    </div>
+
+    <div class="method-content" id="cloudflare-cli">
+      <span class="method-badge cli">Terminal (Full Control)</span>
+
+      <h4>Step 1: Install cloudflared</h4>
+      <div class="code-block">
+        <span class="code-label">SERVER</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code># Debian / Ubuntu
+curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+sudo apt update &amp;&amp; sudo apt install -y cloudflared</code></pre>
+      </div>
+
+      <h4>Step 2: Authenticate &amp; create tunnel</h4>
+      <div class="code-block">
+        <span class="code-label">SERVER</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code># Log in (opens a browser — paste the URL if SSHing remotely)
 cloudflared tunnel login
 
 # Create a named tunnel
 cloudflared tunnel create my-site-tunnel
 
 # Route your domain to the tunnel
-cloudflared tunnel route dns my-site-tunnel www.yourdomain.com</code><span class="label">SERVER</span></pre>
+cloudflared tunnel route dns my-site-tunnel www.yourdomain.com</code></pre>
+      </div>
 
-<h3>Configure the tunnel</h3>
-<p>Create or edit the config file at <code>~/.cloudflared/config.yml</code>:</p>
-
-<pre><code class="yaml">tunnel: YOUR_TUNNEL_ID
+      <h4>Step 3: Configure the tunnel</h4>
+      <p>Create or edit <code>~/.cloudflared/config.yml</code>:</p>
+      <div class="code-block">
+        <span class="code-label">config.yml</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code>tunnel: YOUR_TUNNEL_ID
 credentials-file: /root/.cloudflared/YOUR_TUNNEL_ID.json
 
 ingress:
   - hostname: www.yourdomain.com
     service: http://localhost:80
-  - service: http_status:404</code><span class="label">config.yml</span></pre>
+  - service: http_status:404</code></pre>
+      </div>
 
-<p>Replace <code>localhost:80</code> with whatever port Coolify's reverse proxy (Traefik) is serving on.</p>
-
-<h3>Run the tunnel</h3>
-<pre><code class="bash"># Run in foreground (for testing)
+      <h4>Step 4: Run the tunnel</h4>
+      <div class="code-block">
+        <span class="code-label">SERVER</span>
+        <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+        <pre><code># Test it first (foreground)
 cloudflared tunnel run my-site-tunnel
 
-# Or install as a system service (production)
+# Then install as a system service (survives reboots)
 sudo cloudflared service install
 sudo systemctl enable cloudflared
-sudo systemctl start cloudflared</code><span class="label">SERVER</span></pre>
+sudo systemctl start cloudflared</code></pre>
+      </div>
+    </div>
 
-<div class="callout success">
-  <strong>Live!</strong> Visit <code>https://www.yourdomain.com</code>. Your site is now served through Cloudflare with automatic HTTPS, DDoS protection, and global CDN caching.
+    <div class="callout what">
+      <h4>🏝️ What Just Happened?</h4>
+      <p>Cloudflare is now sitting between your server and the internet. When someone visits <code>https://www.yourdomain.com</code>, Cloudflare routes their request through the encrypted tunnel to your Coolify server, and your site loads. The visitor has no idea where your server actually is — that's the beauty of tunnels.</p>
+    </div>
+
+    <div class="callout success">
+      <h4>🎉 Aloha, You're Live!</h4>
+      <p>Visit <code>https://www.yourdomain.com</code>. Your site is now served through Cloudflare with automatic HTTPS, global CDN caching, and DDoS protection. 🌴</p>
+    </div>
+
+    <h3>🔧 Troubleshooting</h3>
+    <div class="troubleshoot-item">
+      <div class="problem">❌ "502 Bad Gateway" when visiting the domain</div>
+      <div class="fix">The tunnel can't reach your server. Check: (1) Coolify is actually serving on port 80, (2) <code>localhost:80</code> in the tunnel config matches reality, (3) no firewall is blocking local connections.</div>
+    </div>
+    <div class="troubleshoot-item">
+      <div class="problem">❌ Tunnel connects but shows a Cloudflare error page</div>
+      <div class="fix">Your domain's DNS isn't pointing to Cloudflare. Go to your domain registrar and change the nameservers to the ones Cloudflare gave you. This can take up to 24 hours to propagate.</div>
+    </div>
+    <div class="troubleshoot-item">
+      <div class="problem">❌ "cloudflared: command not found"</div>
+      <div class="fix">Either the install failed or <code>cloudflared</code> isn't in your PATH. Try running <code>/usr/local/bin/cloudflared --version</code> or reinstall.</div>
+    </div>
+  </div>
 </div>
 
-<hr>
+<!-- ========== CHEAT SHEET ========== -->
+<div class="cheatsheet" id="cheatsheet">
+  <button class="cheatsheet-header" onclick="toggleCheatsheet()">
+    📋 Command Cheat Sheet <span class="chevron" id="cheatsheetChevron" style="margin-left:auto;">▼</span>
+  </button>
+  <div class="cheatsheet-body">
+    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 1rem;">Every command in order. Copy and paste as you go.</p>
 
-<!-- ============================== -->
-<!-- QUICK REFERENCE -->
-<!-- ============================== -->
-<h2><span class="num">5</span> Quick Reference</h2>
-
-<p>The full workflow in one view:</p>
-
-<pre><code class="bash"># 1. Build with opencode
+    <h4>1. Create project &amp; build</h4>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+      <pre><code>mkdir my-new-site &amp;&amp; cd my-new-site
 opencode
-# "Build me a landing page for a coffee shop"
+# → "Build me a single-page site with a hero, about, and contact section"</code></pre>
+    </div>
 
-# 2. Push to GitHub
-git add . && git commit -m "New site"
-git push
+    <h4>2. Push to GitHub</h4>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+      <pre><code>git init &amp;&amp; git add . &amp;&amp; git commit -m "Initial build"
+gh repo create my-new-site --public --source=. --push</code></pre>
+    </div>
 
-# 3. Coolify auto-deploys via webhook
+    <h4>3. Coolify (GUI — see Phase 3 above)</h4>
 
-# 4. Cloudflare tunnel serves it live at your domain</code><span class="label">FULL WORKFLOW</span></pre>
+    <h4>4. Cloudflare tunnel</h4>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)" title="Copy">📋</button>
+      <pre><code># On your server:
+sudo apt update &amp;&amp; sudo apt install -y cloudflared
+cloudflared tunnel login
+cloudflared tunnel create my-site-tunnel
+cloudflared tunnel route dns my-site-tunnel www.yourdomain.com
 
-<div class="callout warn">
-  <strong>Remember:</strong> The first time through each phase requires manual setup (GitHub repo, Coolify project, Cloudflare tunnel). After that, the workflow is just: edit in opencode &rarr; push &rarr; auto-deploy &rarr; live.
+# Then run it:
+sudo cloudflared service install
+sudo systemctl enable cloudflared &amp;&amp; sudo systemctl start cloudflared</code></pre>
+    </div>
+  </div>
 </div>
 
+<!-- ========== FOOTER ========== -->
 <div class="footer">
-  Built with opencode &middot; Hosted on Coolify &middot; Secured by Cloudflare
+  <div class="island">🏝️ 🌊 🌴 🏖️ 🥥</div>
+  <p>Built with <strong>opencode</strong> · Hosted on <strong>Coolify</strong> · Secured by <strong>Cloudflare</strong></p>
+  <p style="margin-top: 0.3rem; font-size: 0.8rem;">Now go build something awesome. 🤙</p>
 </div>
+
+<!-- ========== JAVASCRIPT ========== -->
+<script>
+  // --- Theme Toggle ---
+  var html = document.documentElement;
+  var themeToggle = document.getElementById('themeToggle');
+  var savedTheme = localStorage.getItem('theme') || 'dark';
+  html.setAttribute('data-theme', savedTheme);
+  themeToggle.textContent = savedTheme === 'dark' ? '🌴' : '🌙';
+
+  themeToggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : 'next';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    themeToggle.textContent = next === 'dark' ? '🌴' : '🌙';
+  });
+
+  // --- Scroll Progress Bar ---
+  var progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', function() {
+    var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    progressBar.style.width = progress + '%';
+  });
+
+  // --- Collapsible Phases ---
+  function togglePhase(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('open');
+  }
+
+  // --- Collapsible Cheat Sheet ---
+  function toggleCheatsheet() {
+    var el = document.getElementById('cheatsheet');
+    var chevron = document.getElementById('cheatsheetChevron');
+    el.classList.toggle('open');
+    chevron.textContent = el.classList.contains('open') ? '▲' : '▼';
+  }
+
+  // --- Method Tabs (Terminal vs GUI) ---
+  function switchMethod(group, method, btn) {
+    var tabs = btn.parentElement.querySelectorAll('.method-tab');
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].classList.remove('active');
+    }
+    btn.classList.add('active');
+
+    var panel = btn.closest('.phase-body');
+    if (!panel) return;
+    var allPanels = panel.querySelectorAll('[id^="' + group + '-"]');
+    for (var j = 0; j < allPanels.length; j++) {
+      allPanels[j].classList.remove('active');
+    }
+    var target = document.getElementById(group + '-' + method);
+    if (target) target.classList.add('active');
+  }
+
+  // --- Copy to Clipboard ---
+  function copyCode(btn) {
+    var codeBlock = btn.closest('.code-block') || btn.closest('pre');
+    var code = codeBlock.querySelector('code') || codeBlock;
+    var text = code.textContent.trim();
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        showCopied(btn);
+      }).catch(function() {
+        fallbackCopy(text, btn);
+      });
+    } else {
+      fallbackCopy(text, btn);
+    }
+  }
+
+  function fallbackCopy(text, btn) {
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      showCopied(btn);
+    } catch (e) {
+      // silently fail
+    }
+    document.body.removeChild(textarea);
+  }
+
+  function showCopied(btn) {
+    var original = btn.textContent;
+    btn.textContent = '✅';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = original;
+      btn.classList.remove('copied');
+    }, 1500);
+  }
+</script>
 
 </body>
 </html>
