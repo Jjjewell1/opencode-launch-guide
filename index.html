@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch a Site with opencode, GitHub, Coolify & Cloudflare</title>
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --surface: #181828;
+    --surface-hover: #1e1e32;
+    --text: #cdd6f4;
+    --muted: #8b8fa8;
+    --border: #2a2a40;
+    --accent: #89b4fa;
+    --green: #a6e3a1;
+    --peach: #fab387;
+    --red: #f38ba8;
+    --mauve: #cba6f7;
+    --code-bg: #12121f;
+    --code-border: #2a2a40;
+    --step-num: #89b4fa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: linear-gradient(135deg, rgba(137,180,250,0.08), rgba(203,166,247,0.05));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 3rem;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--mauve));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero p { color: var(--muted); font-size: 1.1rem; }
+
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 2rem 0 1rem;
+    font-size: 0.95rem;
+  }
+
+  .flow .tool {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .flow .arrow { color: var(--muted); font-size: 1.2rem; }
+
+  h2 {
+    font-size: 1.35rem;
+    color: var(--green);
+    margin: 2.5rem 0 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(137,180,250,0.15);
+    border: 1px solid rgba(137,180,250,0.3);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    color: var(--peach);
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  p { margin-bottom: 0.8rem; }
+
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.4rem; }
+
+  code {
+    font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 0.88em;
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    color: var(--red);
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: 0.8rem 0 1.2rem;
+    position: relative;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    font-size: 0.88em;
+    line-height: 1.6;
+  }
+
+  .label {
+    position: absolute;
+    top: -10px;
+    right: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.7rem;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  .callout {
+    border-left: 3px solid var(--border);
+    padding: 0.9rem 1.1rem;
+    margin: 1.2rem 0;
+    border-radius: 0 6px 6px 0;
+    background: var(--surface);
+  }
+
+  .callout.tip { border-left-color: var(--accent); }
+  .callout.warn { border-left-color: var(--peach); background: rgba(250,179,135,0.05); }
+  .callout.success { border-left-color: var(--green); background: rgba(166,227,161,0.05); }
+
+  .callout strong { color: var(--green); }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 1rem; }
+    .hero h1 { font-size: 1.6rem; }
+    .flow { font-size: 0.8rem; }
+    pre { padding: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Launch a New Site</h1>
+  <p>A step-by-step guide using opencode, GitHub, Coolify, and Cloudflare</p>
+  <div class="flow">
+    <span class="tool">opencode</span>
+    <span class="arrow">&rarr;</span>
+    <span class="tool">GitHub</span>
+    <span class="arrow">&rarr;</span>
+    <span class="tool">Coolify</span>
+    <span class="arrow">&rarr;</span>
+    <span class="tool">Cloudflare</span>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- PHASE 1 -->
+<!-- ============================== -->
+<h2><span class="num">1</span> Build with opencode</h2>
+
+<p>opencode is an AI-powered CLI that writes code, runs commands, and manages your project from the terminal. You describe what you want, and it generates the files.</p>
+
+<h3>Install opencode</h3>
+<pre><code class="bash"># macOS / Linux
+curl -fsSL https://opencode.ai/install.sh | sh
+
+# Windows (PowerShell)
+iwr -useb https://opencode.ai/install.ps1 | iex</code><span class="label">INSTALL</span></pre>
+
+<h3>Create your project</h3>
+<pre><code class="bash"># Make a new folder and enter it
+mkdir my-new-site && cd my-new-site
+
+# Launch opencode
+opencode</code><span class="label">TERMINAL</span></pre>
+
+<p>Once inside the opencode prompt, describe your site:</p>
+
+<pre><code class="text">Build me a single-page portfolio site with a hero section,
+an about section, a projects grid, and a contact form.
+Use a dark theme with blue accents. Keep it to one HTML file.</code><span class="label">PROMPT</span></pre>
+
+<p>opencode will create the files, install dependencies if needed, and can even run a local dev server so you can preview the result.</p>
+
+<div class="callout tip">
+  <strong>Tip:</strong> You can iterate conversationally. Say things like "make the header sticky" or "add a footer with social links" and opencode will update the code in place.
+</div>
+
+<hr>
+
+<!-- ============================== -->
+<!-- PHASE 2 -->
+<!-- ============================== -->
+<h2><span class="num">2</span> Push to GitHub</h2>
+
+<p>Once the site looks right, get it into a GitHub repo so Coolify can pull from it.</p>
+
+<h3>Initialize the repo</h3>
+<pre><code class="bash">git init
+git add .
+git commit -m "Initial site build"</code><span class="label">TERMINAL</span></pre>
+
+<h3>Create the GitHub repo and push</h3>
+<p>You can do this from the terminal with the GitHub CLI (<code>gh</code>), or create the repo on github.com and push manually.</p>
+
+<pre><code class="bash"># Option A: Using GitHub CLI (fastest)
+gh repo create my-new-site --public --source=. --push
+
+# Option B: Manual
+# 1. Go to github.com/new and create the repo
+# 2. Then run:
+git remote add origin https://github.com/YOUR_USERNAME/my-new-site.git
+git branch -M main
+git push -u origin main</code><span class="label">TERMINAL</span></pre>
+
+<div class="callout tip">
+  <strong>Tip:</strong> You can let opencode do this for you. Just say "push this to GitHub" and it will run the commands above.
+</div>
+
+<hr>
+
+<!-- ============================== -->
+<!-- PHASE 3 -->
+<!-- ============================== -->
+<h2><span class="num">3</span> Deploy with Coolify</h2>
+
+<p>Coolify is a self-hosted PaaS (like Heroku, but on your own server). It pulls your code from GitHub, builds it, and keeps it running.</p>
+
+<h3>Connect your GitHub repo</h3>
+<ol>
+  <li>Open your Coolify dashboard.</li>
+  <li>Navigate to your project (or create a new one).</li>
+  <li>Click <strong>+ Add Resource</strong> and select <strong>Application</strong>.</li>
+  <li>Choose <strong>GitHub</strong> as the source and authorize Coolify if prompted.</li>
+  <li>Select the repository and branch (<code>main</code>) you just pushed.</li>
+</ol>
+
+<h3>Configure the build</h3>
+<ol>
+  <li>Set the <strong>Build Pack</strong> to <code>Static</code> (or <code>Nixpacks</code> if you have a framework).</li>
+  <li>Set the <strong>Publish Directory</strong> to <code>/</code> for a root-level static site, or <code>/dist</code> if using a build step.</li>
+  <li>Coolify will assign an internal port (usually <code>80</code> for static sites).</li>
+</ol>
+
+<h3>Deploy</h3>
+<p>Click <strong>Deploy</strong>. Coolify pulls your code from GitHub, builds the container, and starts serving it. You'll see build logs in real time.</p>
+
+<div class="callout success">
+  <strong>Done:</strong> Your site is now running on your Coolify server. You can access it via the internal IP or the preview URL Coolify provides.
+</div>
+
+<h3>Set up auto-deploy (webhook)</h3>
+<p>Every time you push to GitHub, Coolify can automatically redeploy:</p>
+<ol>
+  <li>In Coolify, go to your app's <strong>Webhooks</strong> tab and copy the webhook URL.</li>
+  <li>In GitHub, go to your repo &rarr; <strong>Settings</strong> &rarr; <strong>Webhooks</strong> &rarr; <strong>Add webhook</strong>.</li>
+  <li>Paste the Coolify URL and save.</li>
+</ol>
+
+<div class="callout tip">
+  <strong>Full automation:</strong> From now on, every <code>git push</code> (or asking opencode to "push and deploy") triggers a zero-downtime redeploy.
+</div>
+
+<hr>
+
+<!-- ============================== -->
+<!-- PHASE 4 -->
+<!-- ============================== -->
+<h2><span class="num">4</span> Expose with Cloudflare</h2>
+
+<p>Cloudflare Tunnels let you serve your self-hosted site on a real domain with SSL, without opening ports on your firewall.</p>
+
+<h3>Prerequisites</h3>
+<ul>
+  <li>A domain added to Cloudflare (nameservers pointed to Cloudflare).</li>
+  <li><code>cloudflared</code> installed on your Coolify server.</li>
+</ul>
+
+<pre><code class="bash"># Install cloudflared on your server
+# Debian / Ubuntu
+curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+sudo apt update && sudo apt install -y cloudflared</code><span class="label">SERVER</span></pre>
+
+<h3>Create the tunnel</h3>
+<pre><code class="bash"># Authenticate with Cloudflare (opens a browser login)
+cloudflared tunnel login
+
+# Create a named tunnel
+cloudflared tunnel create my-site-tunnel
+
+# Route your domain to the tunnel
+cloudflared tunnel route dns my-site-tunnel www.yourdomain.com</code><span class="label">SERVER</span></pre>
+
+<h3>Configure the tunnel</h3>
+<p>Create or edit the config file at <code>~/.cloudflared/config.yml</code>:</p>
+
+<pre><code class="yaml">tunnel: YOUR_TUNNEL_ID
+credentials-file: /root/.cloudflared/YOUR_TUNNEL_ID.json
+
+ingress:
+  - hostname: www.yourdomain.com
+    service: http://localhost:80
+  - service: http_status:404</code><span class="label">config.yml</span></pre>
+
+<p>Replace <code>localhost:80</code> with whatever port Coolify's reverse proxy (Traefik) is serving on.</p>
+
+<h3>Run the tunnel</h3>
+<pre><code class="bash"># Run in foreground (for testing)
+cloudflared tunnel run my-site-tunnel
+
+# Or install as a system service (production)
+sudo cloudflared service install
+sudo systemctl enable cloudflared
+sudo systemctl start cloudflared</code><span class="label">SERVER</span></pre>
+
+<div class="callout success">
+  <strong>Live!</strong> Visit <code>https://www.yourdomain.com</code>. Your site is now served through Cloudflare with automatic HTTPS, DDoS protection, and global CDN caching.
+</div>
+
+<hr>
+
+<!-- ============================== -->
+<!-- QUICK REFERENCE -->
+<!-- ============================== -->
+<h2><span class="num">5</span> Quick Reference</h2>
+
+<p>The full workflow in one view:</p>
+
+<pre><code class="bash"># 1. Build with opencode
+opencode
+# "Build me a landing page for a coffee shop"
+
+# 2. Push to GitHub
+git add . && git commit -m "New site"
+git push
+
+# 3. Coolify auto-deploys via webhook
+
+# 4. Cloudflare tunnel serves it live at your domain</code><span class="label">FULL WORKFLOW</span></pre>
+
+<div class="callout warn">
+  <strong>Remember:</strong> The first time through each phase requires manual setup (GitHub repo, Coolify project, Cloudflare tunnel). After that, the workflow is just: edit in opencode &rarr; push &rarr; auto-deploy &rarr; live.
+</div>
+
+<div class="footer">
+  Built with opencode &middot; Hosted on Coolify &middot; Secured by Cloudflare
+</div>
+
+</body>
+</html>
